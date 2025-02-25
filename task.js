@@ -1,14 +1,19 @@
-const href = document.querySelectorAll('a');
+const href = document.querySelectorAll('a')
 
 href.forEach((a) => {
-    let tooltipElement = document.getElementsByClassName('tooltip_active')
-    const tooltipPosition = a.dataset.position
+    let tooltipElement = null
     a.addEventListener('click', (event) => {
         event.preventDefault()
-        let rect = a.getBoundingClientRect()
-        const title_tooltip = a.title
+        if (tooltipElement) {
+            tooltipElement.remove();
+            tooltipElement = null;
+            return
+        }
         tooltipElement = document.createElement('div')
-        tooltipElement.className = 'tooltip_active tooltip_active'
+        tooltipElement.className = 'tooltip tooltip_active'
+        const tooltipPosition = a.dataset.position
+        const title_tooltip = a.title;
+        const rect = a.getBoundingClientRect();
 
         if (tooltipPosition === 'top') {
             tooltipElement.style.bottom = `${rect.top}px`
@@ -29,15 +34,14 @@ href.forEach((a) => {
         else {
             console.log('error if-else')
         }
-        console.log(tooltipElement.style.top, tooltipElement.style.left)
-        tooltipElement.textContent = title_tooltip;
-        a.insertAdjacentElement("beforeend", tooltipElement);
-    });
+        tooltipElement.textContent = title_tooltip
+        document.body.appendChild(tooltipElement)
+    })
 
-    a.addEventListener('click', () => {
-        if (tooltipElement.className.trim() !== '') {
-            tooltipElement.remove();
-            tooltipElement = null;
+    document.addEventListener('click', (event) => {
+        if (tooltipElement && !a.contains(event.target)) {
+            tooltipElement.remove()
+            tooltipElement = null
         }
-    });
-});
+    })
+})
